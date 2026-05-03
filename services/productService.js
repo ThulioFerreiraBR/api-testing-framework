@@ -3,9 +3,14 @@ const supertest = require("supertest");
 const request = supertest(baseURL);
 
 const getAllProducts = () => {
-        return request.get('/products');
-    };
+    return request.get('/products');
+};
+
+const getProductsById = (id) => {
+    return request.get(`/products/${id}`)
+}
 
 module.exports = {
-    getAllProducts
+    getAllProducts,
+    getProductsById
 };
