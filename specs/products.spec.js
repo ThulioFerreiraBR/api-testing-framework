@@ -1,6 +1,7 @@
 const { getAllProducts, getProductsById } = require('../services/productService');
 const { validateSchema } = require('../utils/schemaValidator');
-const schema = require('../schemas/products.schema.json');
+const productsSchema = require('../schemas/products.schema.json');
+const productSchema = require('../schemas/product.schema.json');
 const { baseURL } = require('../config/base.config');
 const supertest = require('supertest');
 const request = supertest(baseURL);
@@ -46,11 +47,10 @@ describe('Products API', () => {
     });
 
     describe('Contract Tests - GET /products', () => {
-
         it('should validate response schema', async () => {
             const contractResponse = await getAllProducts();
             expect(contractResponse.status).toBe(200);
-            validateSchema(contractResponse.body, schema);
+            validateSchema(contractResponse.body, productsSchema);
         });
     });
 
@@ -61,7 +61,6 @@ describe('Products API', () => {
         });
         it('should return a product by id', () => {
             expect(productResponse.status).toBe(200);
-            expect(productResponse.body).toBeDefined();
             expect(productResponse.body.id).toBe(1);
         });
 
@@ -82,6 +81,14 @@ describe('Products API', () => {
             // Expected REST behavior would be 404, but API returns 200 with empty object
             expect(invalidResponse.status).toBe(200);
             expect(invalidResponse.body).toBe("");
+        });
+    });
+
+    describe('Contract Tests - GET /products/:id', () => {
+        it('should validate response schema', async () => {
+            const contractResponse = await getProductsById(1);
+            expect(contractResponse.status).toBe(200);
+            validateSchema(contractResponse.body, productSchema);
         });
     });
 
