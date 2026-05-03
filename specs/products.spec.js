@@ -41,7 +41,7 @@ describe('Products API', () => {
         it('should return 404 for non-existent endpoint', async () => {
             const invalidResponse = await request.get('/productss');
             expect(invalidResponse.status).toBe(404);
-            expect(invalidResponse.body).toBeDefined();
+            expect(invalidResponse.body).toEqual({});
         });
     });
 
@@ -49,18 +49,40 @@ describe('Products API', () => {
 
         it('should validate response schema', async () => {
             const contractResponse = await getAllProducts();
+            expect(contractResponse.status).toBe(200);
             validateSchema(contractResponse.body, schema);
         });
     });
 
     describe('Products API - GET /products/:id', () => {
-        it('should return a product by id', async () => {
-            const productResponse = await getProductsById(1);
+        let productResponse;
+        beforeAll(async () => {
+            productResponse = await getProductsById(1);
+        });
+        it('should return a product by id', () => {
             expect(productResponse.status).toBe(200);
             expect(productResponse.body).toBeDefined();
             expect(productResponse.body.id).toBe(1);
-            expect(productResponse.body.title).toBeDefined();
-            expect(productResponse.body.price).toBeGreaterThan(0);
+        });
+
+        it('should return product with valid business rules (price, title, category)', () => {
+                expect(productResponse.body.price).toBeGreaterThan(0);
+                expect(productResponse.body.title.trim().length).toBeGreaterThan(0);
+                expect(productResponse.body.category.trim().length).toBeGreaterThan(0);
+        });
+
+        it('should not return null values for critical fields', () => {
+            expect(productResponse.body.description).not.toBeNull();
         });
     });
+
+    describe('Negative Tests - GET /products/:id', () => {
+        it('should return empty string for invalid id', async () => {
+            const invalidResponse = await getProductsById(0);
+            // Expected REST behavior would be 404, but API returns 200 with empty object
+            expect(invalidResponse.status).toBe(200);
+            expect(invalidResponse.body).toBe("");
+        });
+    });
+
 });
