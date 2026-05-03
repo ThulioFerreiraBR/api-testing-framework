@@ -87,7 +87,8 @@ describe('Products API', () => {
 
         it('should not return null or empty values for critical fields', () => {
             const product = productResponse.body;
-            expect(product.description?.trim().length).toBeGreaterThan(0);
+            expect(typeof product.description).toBe('string');
+            expect(product.description.trim().length).toBeGreaterThan(0);
         });
 
     });
