@@ -56,23 +56,40 @@ describe('Products API', () => {
 
     describe('Products API - GET /products/:id', () => {
         let productResponse;
+        let randomProduct;
+
         beforeAll(async () => {
-            productResponse = await getProductsById(1);
+            const allProductsResponse = await getAllProducts();
+            const allProducts = allProductsResponse.body;
+            expect(allProducts.length).toBeGreaterThan(0);
+            const randomIndex = Math.floor(Math.random() * allProducts.length);
+            randomProduct = allProducts[randomIndex];
+            const productId = randomProduct.id;
+            productResponse = await getProductsById(productId);
         });
-        it('should return a product by id', () => {
+
+        it('should return consistent product data between list and detail endpoints', () => {
+            const product = productResponse.body;
             expect(productResponse.status).toBe(200);
-            expect(productResponse.body.id).toBe(1);
+            expect(product.id).toBe(randomProduct.id);
+            expect(product.title).toBe(randomProduct.title);
+            expect(product.price).toBe(randomProduct.price);
+            expect(product.description).toBe(randomProduct.description);
+            expect(product.category).toBe(randomProduct.category);
         });
 
-        it('should return product with valid business rules (price, title, category)', () => {
-                expect(productResponse.body.price).toBeGreaterThan(0);
-                expect(productResponse.body.title.trim().length).toBeGreaterThan(0);
-                expect(productResponse.body.category.trim().length).toBeGreaterThan(0);
+        it('should return product with valid business rules', () => {
+            const product = productResponse.body;
+            expect(product.price).toBeGreaterThan(0);
+            expect(product.title.trim().length).toBeGreaterThan(0);
+            expect(product.category.trim().length).toBeGreaterThan(0);
         });
 
-        it('should not return null values for critical fields', () => {
-            expect(productResponse.body.description).not.toBeNull();
+        it('should not return null or empty values for critical fields', () => {
+            const product = productResponse.body;
+            expect(product.description?.trim().length).toBeGreaterThan(0);
         });
+
     });
 
     describe('Negative Tests - GET /products/:id', () => {
