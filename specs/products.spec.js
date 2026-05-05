@@ -1,7 +1,8 @@
-const { getAllProducts, getProductsById } = require('../services/productService');
+const { getAllProducts, getProductsById, postProduct } = require('../services/productService');
 const { validateSchema } = require('../utils/schemaValidator');
 const productsSchema = require('../schemas/products.schema.json');
 const productSchema = require('../schemas/product.schema.json');
+const { newProduct } = require('../factories/product.faker');
 const { baseURL } = require('../config/base.config');
 const supertest = require('supertest');
 const request = supertest(baseURL);
@@ -115,6 +116,13 @@ describe('Products API', () => {
             expect(contractResponse.status).toBe(200);
             validateSchema(contractResponse.body, productSchema);
         });
+    });
+
+    describe('Functional Tests - POST /products', () => {
+        it('should create a neww product', async () => {
+            const productResponse = await postProduct(newProduct);
+            expect(productResponse.status).toBe(201);
+        })
     });
 
 });
