@@ -94,12 +94,19 @@ describe('Products API', () => {
     });
 
     describe('Negative Tests - GET /products/:id', () => {
-        it('should return empty string for invalid id', async () => {
-            const invalidResponse = await getProductsById(0);
-            // Expected REST behavior would be 404, but API returns 200 with empty object
-            expect(invalidResponse.status).toBe(200);
-            expect(invalidResponse.body).toBe("");
-        });
+        it.each([
+            { id: 0, description: 'zero' },
+            { id: -1, description: 'negative' },
+            { id: 99999, description: 'non-existent' },
+            { id: 'abc', description: 'invalid string' },
+        ])(
+            '[BUG-001] $description returns 200 incorrectly (expected: 404)',
+            async ({ id }) => {
+                const invalidResponse = await getProductsById(id);
+                expect(invalidResponse.status).toBe(200); // current behavior, not the correct one
+                expect(invalidResponse.body).toBe("");
+            }
+        );
     });
 
     describe('Contract Tests - GET /products/:id', () => {
