@@ -26,10 +26,16 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Debug API access
+      run: |
+        echo "Testing FakeStore API..."
+        curl -i https://fakestoreapi.com/products
+
     - name: Run Jest tests
       run: npm run test:file
 
     - name: Debug reports
+      if: always()
       run: ls -R reports || echo "sem report"
 
     - name: Upload HTML report
@@ -45,8 +51,3 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./reports
-
-    - name: Debug API access
-      run: |
-        echo "Testing FakeStore API..."
-        curl -i https://fakestoreapi.com/products
