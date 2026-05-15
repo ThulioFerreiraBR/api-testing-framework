@@ -48,4 +48,5 @@ jobs:
 
     - name: Debug API access
       run: |
+        echo "Testing FakeStore API..."
         curl -i https://fakestoreapi.com/products
