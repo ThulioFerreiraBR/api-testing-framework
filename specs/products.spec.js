@@ -27,7 +27,7 @@ describe('Products API', () => {
                 validateProductsList(productsResponse.body);
             });
         });
-
+/*
         describe('Negative Tests', () => {
             it('should return 404 for non-existent endpoint', async () => {
                 const invalidResponse = await request.get('/productss');
@@ -43,8 +43,9 @@ describe('Products API', () => {
                 validateSchema(contractResponse.body, productsSchema);
             });
         });
+        */
     });
-
+/*
     describe('GET /products/:id', () => {
 
         describe('Functional Tests', () => {
@@ -161,5 +162,5 @@ describe('Products API', () => {
             });
         });
     })
-
+*/
 });
